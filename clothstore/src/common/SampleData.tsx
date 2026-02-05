@@ -9,7 +9,13 @@ export type ProductColor = {
   code: string; // mã màu (#fff, #000, rgb...)
 };
 
-export type filters = [{ tab: "men" }, { tab: "women" }, { tab: "kids" }];
+export type Category =
+  | "men"
+  | "women"
+  | "kids"
+  | "casual"
+  | "party"
+  | "fitness";
 
 export type Products = {
   id: number;
@@ -18,141 +24,137 @@ export type Products = {
   size: string[];
   quantity: number;
   rating: number;
-  filters: filters[];
-  category: string;
+  category: Category;
   comment: ProductComment[];
   img: string[]; // nhiều ảnh
   price: number; // đơn vị: VND
   description: string;
 };
 
-export const products = [
+export const products: Products[] = [
   {
     id: 1,
     name: "Basic White T-Shirt",
-    category: "T-Shirt",
-    filters: ["men"],
+    category: "casual",
     colors: [
       { name: "White", code: "#ffffff" },
       { name: "Black", code: "#000000" },
-      { name: "Gray", code: "#9ca3af" },
     ],
     size: ["S", "M", "L", "XL"],
     quantity: 120,
-    comment: [
-      {
-        user: "John",
-        content: "The fabric is soft and very comfortable to wear.",
-        date: "2025-01-12",
-      },
-      {
-        user: "Anna",
-        content: "Nice fit and true to size.",
-        date: "2025-01-15",
-      },
-    ],
     rating: 0,
-    img: ["./product1.png", "./product1-black.png"],
+    comment: [],
+    img: ["/products/product1.png"],
     price: 199000,
-    description:
-      "Basic white T-shirt made from 100% cotton. Breathable, comfortable, and suitable for everyday wear.",
+    description: "Basic white T-shirt for everyday casual wear.",
   },
 
   {
     id: 2,
     name: "Oversize Hoodie",
-    category: "Hoodie",
-    filters: ["men"],
-    colors: [
-      { name: "Black", code: "#000000" },
-      { name: "Dark Gray", code: "#374151" },
-    ],
+    category: "men",
+    colors: [{ name: "Black", code: "#000000" }],
     size: ["M", "L", "XL"],
     quantity: 75,
-    comment: [
-      {
-        user: "Minh",
-        content: "The hoodie is thick and keeps me warm.",
-        date: "2025-01-20",
-      },
-    ],
     rating: 0,
-    img: ["./img1.png"],
+    comment: [],
+    img: ["/products/img1.png"],
     price: 499000,
-    description:
-      "Oversized hoodie with a streetwear style. Warm, comfortable, and perfect for casual outings.",
+    description: "Street-style oversize hoodie for men.",
   },
 
   {
     id: 3,
     name: "Slim Fit Jeans",
-    category: "Jeans",
-    filters: ["men"],
-    colors: [
-      { name: "Blue", code: "#1d4ed8" },
-      { name: "Dark Blue", code: "#1e3a8a" },
-    ],
-    size: ["28", "30", "32", "34"],
+    category: "men",
+    colors: [{ name: "Blue", code: "#1d4ed8" }],
+    size: ["28", "30", "32"],
     quantity: 60,
-    comment: [],
     rating: 0,
-    img: ["./product2.png"],
+    comment: [],
+    img: ["/products/product2.png"],
     price: 599000,
-    description:
-      "Slim-fit jeans with light stretch. Stylish and easy to match.",
+    description: "Slim fit jeans designed for men.",
   },
 
   {
     id: 4,
     name: "Running Sneakers",
-    category: "Shoes",
-    filters: ["women", "kids"],
-    colors: [
-      { name: "Gray", code: "#6b7280" },
-      { name: "Pink", code: "#ec4899" },
-    ],
-    size: ["39", "40", "41", "42", "43"],
+    category: "kids",
+    colors: [{ name: "Pink", code: "#ec4899" }],
+    size: ["30", "31", "32"],
     quantity: 90,
-    comment: [],
     rating: 0,
-    img: ["./product3.png"],
+    comment: [],
+    img: ["/products/product3.png"],
     price: 799000,
-    description: "Lightweight running sneakers with breathable mesh material.",
+    description: "Comfortable sneakers for kids.",
   },
 
   {
     id: 5,
-    name: "Running Sneakers",
-    category: "Shoes",
-    filters: ["kids", "men"],
-    colors: [
-      { name: "Gray", code: "#6b7280" },
-      { name: "Black", code: "#000000" },
-    ],
-    size: ["39", "40", "41", "42", "43"],
-    quantity: 90,
-    comment: [],
+    name: "Party Dress",
+    category: "party",
+    colors: [{ name: "Red", code: "#ef4444" }],
+    size: ["S", "M", "L"],
+    quantity: 40,
     rating: 0,
-    img: ["./product2.png"],
+    comment: [],
+    img: ["/products/party1.png"],
+    price: 1299000,
+    description: "Elegant party dress for special occasions.",
+  },
+  {
+    id: 6,
+    name: "Party Dress",
+    category: "casual",
+    colors: [{ name: "Red", code: "#ef4444" }],
+    size: ["S", "M", "L"],
+    quantity: 40,
+    rating: 0,
+    comment: [],
+    img: ["/products/party1.png"],
+    price: 1299000,
+    description: "Elegant party dress for special occasions.",
+  },
+  {
+    id: 7,
+    name: "Running Sneakers",
+    category: "kids",
+    colors: [{ name: "Pink", code: "#ec4899" }],
+    size: ["30", "31", "32"],
+    quantity: 90,
+    rating: 0,
+    comment: [],
+    img: ["/products/product3.png"],
     price: 799000,
-    description: "Durable sneakers designed for everyday training.",
+    description: "Comfortable sneakers for kids.",
   },
 
   {
-    id: 6,
-    name: "Running Sneakers 2",
-    category: "Shoes",
-    filters: ["kids"],
-    colors: [
-      { name: "Red", code: "#ef4444" },
-      { name: "Blue", code: "#2563eb" },
-    ],
-    size: ["39", "40", "41", "42", "43"],
-    quantity: 90,
-    comment: [],
+    id: 8,
+    name: "Party Dress",
+    category: "party",
+    colors: [{ name: "Red", code: "#ef4444" }],
+    size: ["S", "M", "L"],
+    quantity: 40,
     rating: 0,
-    img: ["./product2.png"],
-    price: 799000,
-    description: "Comfortable sneakers for kids with vibrant colors.",
+    comment: [],
+    img: ["/products/party1.png"],
+    price: 1299000,
+    description: "Elegant party dress for special occasions.",
+  },
+  {
+    id: 9,
+    name: "Party Dress",
+    category: "casual",
+    colors: [{ name: "Red", code: "#ef4444" }],
+    size: ["S", "M", "L"],
+    quantity: 40,
+    rating: 0,
+    comment: [],
+    img: ["/products/party1.png"],
+    price: 1299000,
+    description: "Elegant party dress for special occasions.",
   },
 ];

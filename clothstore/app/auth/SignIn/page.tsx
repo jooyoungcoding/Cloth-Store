@@ -1,7 +1,33 @@
+"use client";
 import Link from "next/link";
 import React from "react";
+import { signInUser } from "@/services/auth/auth.service";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      await signInUser(email, password);
+      toast.success("Sign In successfully");
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to sign in");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen grid grid-cols-2">
       {/* Left image */}
@@ -23,7 +49,7 @@ const Page = () => {
           </h2>
 
           {/* Form */}
-          <form className="mt-8 space-y-5">
+          <form onSubmit={handleSignIn} className="mt-8 space-y-5">
             {/* Email */}
             <div>
               <label className="block text-sm text-black mb-1">
@@ -31,6 +57,7 @@ const Page = () => {
               </label>
               <input
                 type="email"
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter Your Email"
                 className="w-full rounded-lg border border-gray-500 text-black  px-4 py-3
                            focus:outline-none focus:border-black  transition"
@@ -42,6 +69,7 @@ const Page = () => {
               <label className="block text-sm text-black mb-1">Password</label>
               <input
                 type="password"
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter Your Password"
                 className="w-full rounded-lg border border-gray-500 text-black  px-4 py-3
                            focus:outline-none focus:border-black transition"

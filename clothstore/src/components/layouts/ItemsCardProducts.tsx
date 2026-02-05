@@ -31,7 +31,7 @@ interface ItemsCardProps {
   product: Product;
 }
 
-const ItemsCard: React.FC<ItemsCardProps> = ({ product }) => {
+const ItemsCardProducts: React.FC<ItemsCardProps> = ({ product }) => {
   return (
     <div className="mt-9 max-w-[320px]">
       <div className="flex flex-col">
@@ -64,4 +64,4 @@ const ItemsCard: React.FC<ItemsCardProps> = ({ product }) => {
   );
 };
 
-export default ItemsCard;
+export default ItemsCardProducts;
