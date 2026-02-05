@@ -8,6 +8,7 @@ import DashedLine from "../layouts/DashedLine";
 export default function FilterSidebar() {
   const [open, setOpen] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const toggle = (key: string) => {
     setOpen(open === key ? null : key);
@@ -82,14 +83,27 @@ export default function FilterSidebar() {
             { name: "White", code: "#fff" },
             { name: "Red", code: "#ef4444" },
             { name: "Blue", code: "#1d4ed8" },
-          ].map((color) => (
-            <button
-              key={color.name}
-              title={color.name}
-              className="w-6 h-6 border hover:scale-110 transition"
-              style={{ backgroundColor: color.code }}
-            />
-          ))}
+          ].map((color) => {
+            const isSelected = selectedColor === color.code;
+
+            return (
+              <button
+                key={color.name}
+                title={color.name}
+                onClick={() => setSelectedColor(color.code)}
+                className={`
+            w-6 h-6 rounded-full
+            transition
+            ${
+              isSelected
+                ? "ring-2 ring-black ring-offset-2"
+                : "ring-1 ring-gray-300"
+            }
+          `}
+                style={{ backgroundColor: color.code }}
+              />
+            );
+          })}
         </div>
       </Dropdown>
 
@@ -111,29 +125,6 @@ export default function FilterSidebar() {
             placeholder="To"
             className="w-full border px-2 py-1 text-sm"
           />
-        </div>
-      </Dropdown>
-
-      {/* RATINGS */}
-      <Dropdown
-        title="Ratings"
-        open={open === "ratings"}
-        onClick={() => toggle("ratings")}
-      >
-        <div className="space-y-2">
-          {[5, 4, 3, 2, 1].map((rate) => (
-            <label
-              key={rate}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input type="radio" name="rating" />
-              <div className="flex">
-                {Array.from({ length: rate }).map((_, i) => (
-                  <Star key={i} size={14} className="fill-black text-black" />
-                ))}
-              </div>
-            </label>
-          ))}
         </div>
       </Dropdown>
     </aside>

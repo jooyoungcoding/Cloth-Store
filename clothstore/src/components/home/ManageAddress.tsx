@@ -1,7 +1,47 @@
 "use client";
 import { ChevronDown } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { updateUserAddress } from "@/services/user/profile.service";
+import toast from "react-hot-toast";
 
 export default function ManageAddress() {
+  const { user, profile } = useAuth();
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      if (profile.address !== address) setAddress(profile.address || "");
+      if (profile.city !== city) setCity(profile.city || "");
+      if (profile.country != country) setCountry(profile.country || "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile]);
+
+  const handleSaved = async () => {
+    if (!user) return;
+
+    try {
+      setSaving(true);
+
+      await updateUserAddress({
+        userId: user.id,
+        country,
+        city,
+        address,
+      });
+
+      toast.success("Update your address successfully!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update your address!");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl border p-6 max-w-3xl font-LeagueSpartan-Light">
       {/* Header */}
@@ -19,42 +59,24 @@ export default function ManageAddress() {
           </label>
           <input
             type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             placeholder="Enter your street address"
             className="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
         {/* Country */}
-        {/* Country */}
+
         <div>
           <label className="block text-sm font-medium mb-1">Country</label>
-
-          <div className="relative">
-            <select
-              className="
-        w-full
-        px-4
-        pr-10
-        py-2
-        border
-        rounded-lg
-        text-sm
-        bg-white
-        appearance-none
-        focus:outline-none
-        focus:ring-1
-        focus:ring-black
-      "
-            >
-              <option>Vietnam</option>
-              <option>United States</option>
-              <option>Japan</option>
-            </select>
-
-            <span className="pointer-events-none absolute right-3 inset-y-0 flex items-center text-gray-500">
-              <ChevronDown size={20} />
-            </span>
-          </div>
+          <input
+            type="text"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            placeholder="Enter your country"
+            className="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black"
+          />
         </div>
 
         {/* City */}
@@ -62,6 +84,8 @@ export default function ManageAddress() {
           <label className="block text-sm font-medium mb-1">City</label>
           <input
             type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             placeholder="Enter your city"
             className="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black"
           />
@@ -71,6 +95,8 @@ export default function ManageAddress() {
       {/* Actions */}
       <div className="mt-8 flex justify-end">
         <button
+          onClick={handleSaved}
+          disabled={saving}
           className="
             px-6
             py-3
@@ -83,7 +109,7 @@ export default function ManageAddress() {
             rounded-full
           "
         >
-          Save Address
+          {saving ? "saving..." : "Save Address"}
         </button>
       </div>
     </div>

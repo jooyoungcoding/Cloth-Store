@@ -4,6 +4,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { SignUpUser } from "@/services/auth/auth.service";
 import { useState } from "react";
+import { googleAuth, facebookAuth } from "@/services/auth/auth.service";
 
 const Page = () => {
   const [email, setEmail] = useState("");
@@ -35,6 +36,22 @@ const Page = () => {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    try {
+      await googleAuth();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFaceBookAuth = async () => {
+    try {
+      await facebookAuth();
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -135,6 +152,41 @@ const Page = () => {
               Signup
             </button>
           </form>
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-gray-300" />
+            <span className="text-xs text-gray-400">OR</span>
+            <div className="flex-1 h-px bg-gray-300" />
+          </div>
+
+          {/* Social buttons */}
+          <div className="flex gap-3">
+            {/* Google */}
+            <button
+              onClick={handleGoogleAuth}
+              type="button"
+              className="w-full flex items-center justify-center gap-3
+               border border-gray-300 rounded-lg py-3
+               text-sm font-medium text-black
+               hover:bg-gray-100 transition"
+            >
+              <img src="/google.png" alt="Google" className="w-5 h-5" />
+              Google
+            </button>
+
+            {/* Facebook */}
+            <button
+              onClick={handleFaceBookAuth}
+              type="button"
+              className="w-full flex items-center justify-center gap-3
+               border border-gray-300 rounded-lg py-3
+               text-sm font-medium text-black
+               hover:bg-gray-100 transition"
+            >
+              <img src="/facebook.png" alt="Facebook" className="w-5 h-5" />
+              Facebook
+            </button>
+          </div>
         </div>
       </div>
     </div>

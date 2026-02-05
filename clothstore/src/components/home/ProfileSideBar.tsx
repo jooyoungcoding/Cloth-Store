@@ -10,7 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 import MenuItem from "../layouts/MenuItem";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export type Tab = "personal" | "orders" | "address" | "settings";
 
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const ProfileSideBar = ({ activeTab, setActiveTab }: Props) => {
-  const { user, profile } = useAuth();
+  const { user, profile } = useAuthContext();
 
   const getInitialCharacter = (email: string) => email.charAt(0).toUpperCase();
 
@@ -28,7 +28,7 @@ const ProfileSideBar = ({ activeTab, setActiveTab }: Props) => {
     user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
 
   return (
-    <aside className="w-[300px] bg-white font-LeagueSpartan-Light">
+    <aside className="w-[300px] font-LeagueSpartan-Light">
       {/* Header */}
       <div className="p-5 border-b">
         <div className="flex items-center gap-3">

@@ -33,7 +33,6 @@ export default function Settings() {
         border
         rounded-lg
         text-sm
-        bg-white
         appearance-none
         focus:outline-none
       "
@@ -65,7 +64,6 @@ export default function Settings() {
         border
         rounded-lg
         text-sm
-        bg-white
         appearance-none
         focus:outline-none
       "
@@ -215,7 +213,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="bg-white rounded-xl border max-w-3xl ">
+    <div className="rounded-xl border max-w-3xl ">
       {/* Header */}
       <div className="px-6 pt-6 pb-4 border-b">
         <h2 className="text-4xl font-semibold text-black">Settings</h2>

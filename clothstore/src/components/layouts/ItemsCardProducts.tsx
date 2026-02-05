@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { PlusIcon, Heart } from "lucide-react";
 
 interface ProductComment {
@@ -35,30 +36,32 @@ const ItemsCardProducts: React.FC<ItemsCardProps> = ({ product }) => {
   return (
     <div className="mt-9 max-w-[320px]">
       <div className="flex flex-col">
-        <div className="w-full border-none aspect-square relative hover:scale-95 transition-all duration-300">
-          <Image src={product.img[0]} alt={product.name} fill />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4 text-black">
-            <button className="px-1 py-1 bg-gray-300 hover:bg-gray-400 hover:cursor-pointer transition-colors duration-300">
-              <PlusIcon />
-            </button>
-            <button className="px-1 py-1 bg-gray-300 hover:bg-gray-400 hover:cursor-pointer transition-colors duration-300">
-              <Heart />
-            </button>
-          </div>{" "}
-        </div>
-
-        <div className="mt-1">
-          <p className="text-sm text-gray-500">
-            {product.category} <span>+3 colors</span>
-          </p>
-
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="font-medium text-sm text-black">{product.name}</h3>
-            <span className="font-medium text-sm text-black">
-              $ {product.price}
-            </span>
+        <Link href={`/Products/${product.id}`} className="group">
+          <div className="w-full border-none aspect-square relative hover:scale-95 transition-all duration-300">
+            <Image src={product.img[0]} alt={product.name} fill />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center gap-4 text-black">
+              <button className="px-1 py-1 bg-gray-300 hover:bg-gray-400 hover:cursor-pointer transition-colors duration-300">
+                <PlusIcon />
+              </button>
+              <button className="px-1 py-1 bg-gray-300 hover:bg-gray-400 hover:cursor-pointer transition-colors duration-300">
+                <Heart />
+              </button>
+            </div>{" "}
           </div>
-        </div>
+
+          <div className="mt-1">
+            <p className="text-sm text-gray-500">
+              {product.category} <span>+3 colors</span>
+            </p>
+
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="font-medium text-sm text-black">{product.name}</h3>
+              <span className="font-medium text-sm text-black">
+                $ {product.price}
+              </span>
+            </div>
+          </div>
+        </Link>
       </div>
     </div>
   );
