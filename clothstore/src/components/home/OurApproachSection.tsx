@@ -1,4 +1,7 @@
+"use client";
 import React from "react";
+import { useRef } from "react";
+import { useScroll, motion, useTransform } from "framer-motion";
 
 const OurApproachSection = () => {
   const imagesSection = [
@@ -8,8 +11,30 @@ const OurApproachSection = () => {
     { id: 4, url: "/approach4.png", alt: "img4" },
   ];
 
+  const sectionRef = useRef(null);
+  const OFFSET = 140;
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const moveOdd = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [OFFSET, 0, -OFFSET],
+  );
+
+  const moveEven = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [-OFFSET, 0, OFFSET],
+  );
+
   return (
-    <div className="flex flex-col items-center text-center gap-4 mt-32 mb-56">
+    <div
+      ref={sectionRef}
+      className="flex flex-col items-center text-center gap-4 mt-32 mb-56"
+    >
       <h1 className="text-black text-6xl font-medium font-LeagueSpartan-Light">
         OUR APPROACH TO FASHION DESIGN
       </h1>
@@ -25,11 +50,7 @@ const OurApproachSection = () => {
         {imagesSection.map((item) => {
           const isOdd = item.id % 2 !== 0;
           return (
-            <div
-              key={item.id}
-              className={`transition-transform duration-500 ${isOdd ? "-translate-y-12" : "translate-y-12"}
-              `}
-            >
+            <motion.div key={item.id} style={{ y: isOdd ? moveOdd : moveEven }}>
               <img
                 src={item.url}
                 alt={item.alt}
@@ -37,7 +58,7 @@ const OurApproachSection = () => {
                 height={360}
                 className="object-cover"
               />
-            </div>
+            </motion.div>
           );
         })}
       </div>

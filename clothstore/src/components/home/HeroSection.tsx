@@ -81,7 +81,7 @@ const HeroSection = () => {
               text="Go To Shop"
               icon={<MoveRight />}
               iconPosition="right"
-              href="./shop"
+              href="./Shop"
               bgColor="#d7d7d7"
               textColor="black"
               iconColor="black"
