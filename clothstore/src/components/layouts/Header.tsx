@@ -12,7 +12,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { logOutUser } from "@/services/auth/auth.service";
 import { span } from "framer-motion/client";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ const Header = () => {
   const [isIconMode, setIsIconMode] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, profile, loading } = useAuth();
+  const { user, profile } = useAuthContext();
   const pathName = usePathname();
   const router = useRouter();
 

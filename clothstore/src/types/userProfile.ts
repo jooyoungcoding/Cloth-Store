@@ -10,6 +10,8 @@ export interface UserProfile {
 
   phone: string | null;
   address: string | null;
+  city: string | null;
+  country: string | null;
 
   role: UserRole;
   is_active: boolean;

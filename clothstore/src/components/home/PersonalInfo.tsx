@@ -1,22 +1,136 @@
 "use client";
 
-import { useState } from "react";
-import { Camera, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Camera, ChevronDown, User } from "lucide-react";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { updateUserProfile } from "@/services/user/profile.service";
+import toast from "react-hot-toast";
+import {
+  uploadAvatar,
+  updateUserAvatar,
+} from "@/services/user/profile.service";
 
 const PersonalInfo = () => {
+  const { user, profile, refreshProfile } = useAuthContext();
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<{ username?: string; phone?: string }>(
+    {},
+  );
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0]);
+      setAvatarPreview(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const validate = () => {
+    const newErrors: { username?: string; phone?: string } = {};
+    if (!username.trim()) newErrors.username = "Username is required";
+    if (!phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^0\d{9}$/.test(phone)) {
+      newErrors.phone =
+        "Phone number must be a valid Vietnamese number (10 digits, starts with 0)";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  useEffect(() => {
+    if (profile) {
+      if (profile.username !== username) setUsername(profile.username || "");
+      if (profile.phone !== phone) setPhone(profile.phone || "");
+      if (profile.email !== email) setEmail(profile.email || "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile]);
+  const handleSave = async () => {
+    if (!user) return;
+    if (!validate()) return;
+    try {
+      setSaving(true);
+
+      // Upload avatar nếu có file mới
+      if (avatarFile) {
+        const avatarUrl = await uploadAvatar(user.id, avatarFile);
+        await updateUserAvatar(user.id, avatarUrl);
+      }
+
+      await updateUserProfile({
+        userId: user.id,
+        username,
+        phone,
+      });
+
+      await refreshProfile(user.id);
+      toast.success("Update your profile successfully");
+      setAvatarFile(null);
+    } catch (error: any) {
+      console.log("AUTH UID:", user?.id);
+      console.log("USER ID PARAM:", user);
+      console.error("UPLOAD AVATAR ERROR:", error);
+
+      toast.error(error.message || "Failed to update your profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getAvatarUrl = () => {
+    if (profile?.avatar_url) return profile.avatar_url;
+    if (user?.user_metadata?.avatar_url) return user.user_metadata.avatar_url;
+    if (user?.user_metadata?.picture) return user.user_metadata.picture;
+    return null;
+  };
+
+  const getInitialCharacter = (email: string) => email.charAt(0).toUpperCase();
+
   return (
-    <div className="bg-white rounded-xl border p-6 max-w-3xl font-LeagueSpartan-Light">
+    <div className="rounded-xl border p-6 max-w-3xl font-LeagueSpartan-Light">
       {/* Avatar */}
       <div className="flex items-center gap-6 mb-8">
         <div className="relative">
-          <img
-            src="https://randomuser.me/api/portraits/men/32.jpg"
-            alt="avatar"
-            className="w-24 h-24 rounded-full object-cover"
+          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+            {user ? (
+              avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : getAvatarUrl(user) ? (
+                <img
+                  src={getAvatarUrl(user)}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-semibold text-xl">
+                  {getInitialCharacter(user.email ?? "")}
+                </span>
+              )
+            ) : (
+              <User className="text-white" size={18} />
+            )}
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            id="avatar-upload"
+            style={{ display: "none" }}
+            onChange={handleAvatarChange}
           />
-
-          {/* Camera icon */}
-          <button className="absolute bottom-1 right-1 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center">
+          <button
+            className="absolute bottom-1 right-1 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center"
+            onClick={() => document.getElementById("avatar-upload")?.click()}
+            type="button"
+          >
             <Camera size={16} />
           </button>
         </div>
@@ -31,9 +145,13 @@ const PersonalInfo = () => {
           <label className="block text-sm font-medium mb-1">Username</label>
           <input
             type="text"
-            defaultValue="Robert Fox"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black"
           />
+          {errors.username && (
+            <p className="text-red-500 text-xs mt-1">{errors.username}</p>
+          )}
         </div>
 
         {/* Email */}
@@ -41,52 +159,26 @@ const PersonalInfo = () => {
           <label className="block text-sm font-medium mb-1">Email</label>
           <input
             type="email"
-            defaultValue="robert.fox@email.com"
+            value={email}
             readOnly
-            className="w-full px-4 py-2 border rounded-lg text-sm bg-gray-100 text-gray-500"
+            className="w-full px-4 py-2 border rounded-lg text-sm text-gray-500"
           />
         </div>
 
         {/* Phone */}
         <div>
           <label className="block text-sm font-medium mb-1">Phone Number</label>
-
           <div className="flex gap-2">
-            {/* Country code select */}
-            <div className="relative">
-              <select
-                className="
-          appearance-none
-          px-3
-          pr-8
-          py-2
-          border
-          rounded-lg
-          text-sm
-          bg-white
-          focus:outline-none
-          focus:ring-1
-          focus:ring-black
-        "
-              >
-                <option>+84</option>
-                <option>+1</option>
-                <option>+880</option>
-              </select>
-
-              {/* Arrow center */}
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                <ChevronDown size={20} />
-              </span>
-            </div>
-
-            {/* Phone input */}
             <input
               type="tel"
-              defaultValue="912 345 678"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="flex-1 px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
+          {errors.phone && (
+            <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+          )}
         </div>
 
         {/* Currency */}
@@ -103,7 +195,6 @@ const PersonalInfo = () => {
         border
         rounded-lg
         text-sm
-        bg-white
         appearance-none
         focus:outline-none
         focus:ring-1
@@ -125,8 +216,12 @@ const PersonalInfo = () => {
 
       {/* Save button */}
       <div className="mt-8">
-        <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition text-white text-sm font-medium rounded-full">
-          Save Changes
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition text-white text-sm font-medium rounded-full"
+        >
+          {saving ? "saving..." : "Save Changes"}
         </button>
       </div>
     </div>
